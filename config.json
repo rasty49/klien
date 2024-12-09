@@ -8,8 +8,8 @@
   ],
   "notifications": {
     "pushover": {
-      "token": "avkw82ju1nk5mkwvjdmg4meuzn9vwn",
-      "user": "uyxcfqbqefnvzgxqxuanxgug88umr2",
+      "token": "YOUR_APP_TOKEN",
+      "user": "YOUR_USER_KEY",
       "device": ["iphonexr"]
     }
   }
