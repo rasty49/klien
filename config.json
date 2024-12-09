@@ -1,0 +1,16 @@
+{
+  "searches": [
+    {
+      "name": "iPhone 13",
+      "url": "https://www.kleinanzeigen.de/s-iphone-13/k0",
+      "recursive": true
+    }
+  ],
+  "notifications": {
+    "pushover": {
+      "token": "avkw82ju1nk5mkwvjdmg4meuzn9vwn",
+      "user": "uyxcfqbqefnvzgxqxuanxgug88umr2",
+      "device": ["iphonexr"]
+    }
+  }
+}
