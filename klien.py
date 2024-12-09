@@ -1,1 +1,1 @@
-klien
+pip install ek-scraper
