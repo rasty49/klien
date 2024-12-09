@@ -1,0 +1,60 @@
+name: Run ek-scraper on a schedule
+
+on:
+  schedule:
+    # Runs every hour (customize as needed)
+    - cron: "0 * * * *"
+  workflow_dispatch: # Allows manual trigger from the Actions tab
+  
+jobs:
+  run-ek-scraper:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Check out the repository so we have access to config.json
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Python (assuming ek-scraper runs with Python)
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      # Step 3: Install ek-scraper
+      - name: Install ek-scraper
+        run: |
+          pip install --upgrade pip
+          pip install ek-scraper
+
+      # Step 4: Inject secrets into environment variables (if needed)
+      # If your config.json references secrets directly, consider using environment variables
+      # Or you can overwrite config.json on-the-fly using sed or similar, if needed.
+      # For example, if your config.json includes placeholders for PUSHOVER_TOKEN and PUSHOVER_USER:
+      - name: Update config with secrets
+        run: |
+          sed -i "s/YOUR_APP_TOKEN/${{ secrets.PUSHOVER_TOKEN }}/g" config.json
+          sed -i "s/YOUR_USER_KEY/${{ secrets.PUSHOVER_USER }}/g" config.json
+
+      # Step 5: Run ek-scraper
+      # To maintain state across runs, you might want to store data_store.json in the repo, or an artifact.
+      # Using a data_store file checked into the repo is risky (could cause merge conflicts). 
+      # Instead, consider caching or using an artifact.
+      
+      # For initial run without notifications (optional):
+      # - run: ek-scraper run --data-store data_store.json --no-notifications config.json
+      
+      # Subsequent runs with notifications:
+      - name: Run ek-scraper
+        run: ek-scraper run --data-store data_store.json config.json
+
+      # Step 6: If you need to persist the data_store.json file to track previously seen ads:
+      # Commit changes back to the repo or upload as an artifact:
+      - name: Commit updated data_store
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data_store.json
+          git commit -m "Update data_store.json"
+          git push
+        # Note: This will only work if you have appropriate permissions and the workflow has write permissions to the repo.
+        # Alternatively, you can upload the file as an artifact if you don't want to commit it back.
